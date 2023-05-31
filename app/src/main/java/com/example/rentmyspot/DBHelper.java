@@ -194,4 +194,28 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
         }
     }
+    public List<Seating> SeatingrentList(String username) {
+        List<Seating> returnList = new ArrayList<>();
+        String queryString = "Select * from " + TABLENAME2 + " WHERE " +
+                T2COL2 + " != '" + username + "'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString, null);
+        if (cursor.moveToFirst()) {
+            do {
+                int seatingID = cursor.getInt(0);
+                String sName = cursor.getString(2);
+                String sCategory = cursor.getString(3);
+                int sPrice = cursor.getInt(4);
+                String sDescription = cursor.getString(5);
+                byte[] imageData = cursor.getBlob(6);
+                boolean rented = cursor.getInt(7) == 1;
+
+                Seating newSeat = new Seating(username, sName, sCategory, sPrice, sDescription, imageData, rented);
+                returnList.add(newSeat);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return returnList;
+    }
 }
